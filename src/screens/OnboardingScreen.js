@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -59,7 +60,7 @@ export default function OnboardingScreen({ navigation }) {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.slide}>
-        <BlurView intensity={80} tint="light" style={styles.glassCard}>
+        <BlurView intensity={90} tint="light" style={styles.glassCard}>
           <View style={styles.iconContainer}>
             <Ionicons name={item.icon} size={80} color={colors.primary} />
           </View>
@@ -71,8 +72,8 @@ export default function OnboardingScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={40} />
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={60} />
       <View style={styles.overlay} />
       
       <Animated.FlatList
@@ -110,12 +111,12 @@ export default function OnboardingScreen({ navigation }) {
         </View>
 
         <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={nextSlide}>
-          <BlurView intensity={100} tint="dark" style={styles.buttonBlur}>
+          <View style={styles.buttonContent}>
             <Text style={styles.buttonText}>{currentIndex === SLIDES.length - 1 ? "Get Started" : "Next"}</Text>
-          </BlurView>
+          </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -128,11 +129,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    opacity: 0.5,
+    opacity: 0.15,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(242, 242, 247, 0.85)',
   },
   slide: {
     width,
@@ -147,13 +148,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.surfaceSolid,
+    backgroundColor: colors.surface,
     ...shadows.card,
   },
   iconContainer: {
     marginBottom: spacing.l,
     padding: spacing.l,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(88, 86, 214, 0.1)', // Translucent Indigo
     borderRadius: borderRadius.full,
   },
   title: {
@@ -187,13 +189,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...shadows.button,
   },
-  buttonBlur: {
+  buttonContent: {
     paddingVertical: spacing.l,
     alignItems: 'center',
+    backgroundColor: colors.primary, // Solid indigo for maximum apple-contrast
   },
   buttonText: {
     color: '#FFF',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 19,
+    fontWeight: '700',
   },
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,8 +45,8 @@ export default function ProfileScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={50} />
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={60} />
       <View style={styles.overlay} />
 
       <View style={styles.header}>
@@ -57,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
 
       <View style={styles.content}>
         
-        <BlurView intensity={80} tint="light" style={styles.profileCard}>
+        <BlurView intensity={90} tint="light" style={styles.profileCard}>
           <View style={styles.avatar}>
             <Ionicons name="person" size={50} color={colors.surfaceSolid} />
           </View>
@@ -67,15 +68,15 @@ export default function ProfileScreen({ navigation }) {
 
         <Text style={styles.sectionTitle}>Your Stats</Text>
         <View style={styles.statsContainer}>
-          <BlurView intensity={80} tint="light" style={styles.statCard}>
-            <View style={[styles.iconContainer, { backgroundColor: 'rgba(0,122,255,0.1)' }]}>
+          <BlurView intensity={90} tint="light" style={styles.statCard}>
+            <View style={[styles.iconContainer, { backgroundColor: 'rgba(88, 86, 214, 0.1)' }]}>
               <Ionicons name="checkmark-done" size={28} color={colors.primary} />
             </View>
             <Text style={styles.statValue}>{stats.completed}</Text>
             <Text style={styles.statLabel}>Tasks Done</Text>
           </BlurView>
           
-          <BlurView intensity={80} tint="light" style={styles.statCard}>
+          <BlurView intensity={90} tint="light" style={styles.statCard}>
             <View style={[styles.iconContainer, { backgroundColor: 'rgba(52,199,89,0.1)' }]}>
               <Ionicons name="list" size={28} color={colors.secondary} />
             </View>
@@ -85,7 +86,7 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Ionicons name="refresh" size={20} color={colors.error} style={{ marginRight: 8 }} />
+          <Ionicons name="refresh" size={22} color={colors.error} style={{ marginRight: 8 }} />
           <Text style={styles.resetText}>Reset App Data</Text>
         </TouchableOpacity>
 
@@ -96,8 +97,8 @@ export default function ProfileScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  bgImage: { position: 'absolute', width: '100%', height: '100%', opacity: 0.3 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(242, 242, 247, 0.7)' },
+  bgImage: { position: 'absolute', width: '100%', height: '100%', opacity: 0.15 },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(242, 242, 247, 0.85)' },
   header: { flexDirection: 'row', alignItems: 'center', padding: spacing.m },
   backButton: { flexDirection: 'row', alignItems: 'center' },
   backText: { ...typography.body, color: colors.primary, marginLeft: 4 },
@@ -105,7 +106,8 @@ const styles = StyleSheet.create({
   profileCard: {
     borderRadius: borderRadius.xl, padding: spacing.xl,
     alignItems: 'center', marginBottom: spacing.xl,
-    overflow: 'hidden', borderWidth: 1, borderColor: colors.border,
+    overflow: 'hidden', borderWidth: 1, borderColor: colors.surfaceSolid,
+    backgroundColor: colors.surface, ...shadows.card,
   },
   avatar: {
     width: 100, height: 100, borderRadius: 50,
@@ -118,20 +120,21 @@ const styles = StyleSheet.create({
   sectionTitle: { ...typography.h3, marginBottom: spacing.m },
   statsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xxl },
   statCard: {
-    flex: 1, borderRadius: borderRadius.l, padding: spacing.m,
+    flex: 1, borderRadius: borderRadius.l, padding: spacing.l,
     alignItems: 'center', marginHorizontal: spacing.xs,
-    overflow: 'hidden', borderWidth: 1, borderColor: colors.border,
+    overflow: 'hidden', borderWidth: 1, borderColor: colors.surfaceSolid,
+    backgroundColor: colors.surface, ...shadows.card,
   },
   iconContainer: {
-    width: 56, height: 56, borderRadius: 28,
-    justifyContent: 'center', alignItems: 'center', marginBottom: spacing.s,
+    width: 60, height: 60, borderRadius: 30,
+    justifyContent: 'center', alignItems: 'center', marginBottom: spacing.m,
   },
   statValue: { ...typography.h2, marginBottom: 2 },
   statLabel: { ...typography.caption },
   resetButton: {
     flexDirection: 'row', backgroundColor: 'rgba(255, 59, 48, 0.1)',
-    paddingVertical: spacing.m, borderRadius: borderRadius.full,
+    paddingVertical: spacing.l, borderRadius: borderRadius.l,
     justifyContent: 'center', alignItems: 'center', marginTop: 'auto',
   },
-  resetText: { color: colors.error, fontSize: 17, fontWeight: '600' },
+  resetText: { color: colors.error, fontSize: 18, fontWeight: '700' },
 });

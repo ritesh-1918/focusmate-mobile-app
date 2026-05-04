@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, Animated, Image, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, Animated, Image, KeyboardAvoidingView, Platform, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,9 +15,9 @@ export default function HomeScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const categories = [
-    { name: 'Study', icon: 'book', color: '#007AFF' },
-    { name: 'Assignment', icon: 'document-text', color: '#FF9500' },
-    { name: 'Personal', icon: 'person', color: '#34C759' }
+    { name: 'Study', icon: 'book', color: '#5856D6' }, // Indigo
+    { name: 'Assignment', icon: 'document-text', color: '#FF9500' }, // Orange
+    { name: 'Personal', icon: 'person', color: '#34C759' } // Green
   ];
 
   useEffect(() => {
@@ -108,7 +109,7 @@ export default function HomeScreen({ navigation }) {
         onPress={() => toggleTask(item.id)}
         onLongPress={() => deleteTask(item.id)}
       >
-        <BlurView intensity={70} tint="light" style={styles.taskCard}>
+        <BlurView intensity={90} tint="light" style={styles.taskCard}>
           <View style={styles.taskInfo}>
             <View style={[styles.checkbox, item.completed && styles.checkboxCompleted]}>
               {item.completed && <Ionicons name="checkmark" size={16} color={colors.surfaceSolid} />}
@@ -130,8 +131,8 @@ export default function HomeScreen({ navigation }) {
   const progress = tasks.length > 0 ? completedCount / tasks.length : 0;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={50} />
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={60} />
       <View style={styles.overlay} />
 
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
@@ -147,7 +148,7 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <BlurView intensity={80} tint="light" style={styles.progressCard}>
+        <BlurView intensity={90} tint="light" style={styles.progressCard}>
           <Text style={styles.progressTitle}>Daily Progress</Text>
           <View style={styles.progressBarContainer}>
             <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
@@ -161,7 +162,7 @@ export default function HomeScreen({ navigation }) {
             keyExtractor={(item) => item.id}
             renderItem={renderTask}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: spacing.xxl * 2 }}
+            contentContainerStyle={{ paddingBottom: spacing.xxl * 3 }}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Ionicons name="leaf-outline" size={60} color={colors.textSecondary} />
@@ -179,57 +180,66 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
 
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.modalContainer}>
-          <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFillObject} />
-          
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>New Task</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close-circle" size={28} color={colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalOverlay}>
+            <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+            <KeyboardAvoidingView 
+              behavior={Platform.OS === "ios" ? "padding" : "height"} 
+              style={styles.modalContainer}
+            >
+              <View style={styles.modalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>New Task</Text>
+                  <TouchableOpacity onPress={() => setModalVisible(false)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                    <Ionicons name="close-circle" size={30} color={colors.textSecondary} />
+                  </TouchableOpacity>
+                </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="What do you need to do?"
-              placeholderTextColor={colors.textSecondary}
-              value={newTaskTitle}
-              onChangeText={setNewTaskTitle}
-              autoFocus
-            />
+                <TextInput
+                  style={styles.input}
+                  placeholder="What do you need to do?"
+                  placeholderTextColor={colors.textSecondary}
+                  value={newTaskTitle}
+                  onChangeText={setNewTaskTitle}
+                  autoFocus={true}
+                  enablesReturnKeyAutomatically
+                  returnKeyType="done"
+                  onSubmitEditing={addTask}
+                />
 
-            <Text style={styles.categoryLabel}>Category</Text>
-            <View style={styles.categorySelector}>
-              {categories.map((cat) => (
-                <TouchableOpacity
-                  key={cat.name}
-                  style={[
-                    styles.categoryOption,
-                    selectedCategory === cat.name && { backgroundColor: cat.color, borderColor: cat.color }
-                  ]}
-                  onPress={() => setSelectedCategory(cat.name)}
-                >
-                  <Ionicons 
-                    name={cat.icon} 
-                    size={16} 
-                    color={selectedCategory === cat.name ? colors.surfaceSolid : cat.color} 
-                  />
-                  <Text style={[
-                    styles.categoryOptionText,
-                    selectedCategory === cat.name ? { color: colors.surfaceSolid } : { color: cat.color }
-                  ]}>
-                    {cat.name}
-                  </Text>
+                <Text style={styles.categoryLabel}>Category</Text>
+                <View style={styles.categorySelector}>
+                  {categories.map((cat) => (
+                    <TouchableOpacity
+                      key={cat.name}
+                      style={[
+                        styles.categoryOption,
+                        selectedCategory === cat.name && { backgroundColor: cat.color, borderColor: cat.color }
+                      ]}
+                      onPress={() => setSelectedCategory(cat.name)}
+                    >
+                      <Ionicons 
+                        name={cat.icon} 
+                        size={16} 
+                        color={selectedCategory === cat.name ? colors.surfaceSolid : cat.color} 
+                      />
+                      <Text style={[
+                        styles.categoryOptionText,
+                        selectedCategory === cat.name ? { color: colors.surfaceSolid } : { color: cat.color }
+                      ]}>
+                        {cat.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <TouchableOpacity style={styles.saveButton} onPress={addTask}>
+                  <Text style={styles.saveButtonText}>Save Task</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-
-            <TouchableOpacity style={styles.saveButton} onPress={addTask}>
-              <Text style={styles.saveButtonText}>Save Task</Text>
-            </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
           </View>
-        </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
       </Modal>
 
     </SafeAreaView>
@@ -238,8 +248,8 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  bgImage: { position: 'absolute', width: '100%', height: '100%', opacity: 0.3 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(242, 242, 247, 0.7)' },
+  bgImage: { position: 'absolute', width: '100%', height: '100%', opacity: 0.15 },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(242, 242, 247, 0.85)' },
   content: { flex: 1 },
   header: {
     flexDirection: 'row',
@@ -252,7 +262,7 @@ const styles = StyleSheet.create({
   greeting: { ...typography.h1 },
   subtitle: { ...typography.bodyBold, color: colors.textSecondary, marginTop: 4 },
   avatarPlaceholder: {
-    width: 44, height: 44, borderRadius: 22,
+    width: 46, height: 46, borderRadius: 23,
     backgroundColor: colors.primary,
     justifyContent: 'center', alignItems: 'center',
     ...shadows.card,
@@ -262,73 +272,79 @@ const styles = StyleSheet.create({
     padding: spacing.l,
     borderRadius: borderRadius.l,
     overflow: 'hidden',
-    borderWidth: 1, borderColor: colors.border,
+    borderWidth: 1, borderColor: colors.surfaceSolid,
+    backgroundColor: colors.surface, // more white
     marginBottom: spacing.l,
+    ...shadows.card,
   },
   progressTitle: { ...typography.bodyBold, marginBottom: spacing.m },
   progressBarContainer: {
-    height: 8,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    borderRadius: 4,
+    height: 10,
+    backgroundColor: 'rgba(0,0,0,0.06)',
+    borderRadius: 5,
     overflow: 'hidden',
     marginBottom: spacing.s,
   },
   progressBar: {
     height: '100%',
     backgroundColor: colors.primary,
-    borderRadius: 4,
+    borderRadius: 5,
   },
   progressText: { ...typography.caption },
   listContainer: { flex: 1, paddingHorizontal: spacing.l },
-  taskCardContainer: { marginBottom: spacing.m, borderRadius: borderRadius.m, ...shadows.card },
+  taskCardContainer: { marginBottom: spacing.m, borderRadius: borderRadius.l, ...shadows.card },
   taskCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    padding: spacing.m, borderRadius: borderRadius.m,
-    overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)',
+    padding: spacing.m, borderRadius: borderRadius.l,
+    overflow: 'hidden', borderWidth: 1, borderColor: colors.surfaceSolid,
+    backgroundColor: colors.surface,
   },
   taskInfo: { flexDirection: 'row', alignItems: 'center' },
   checkbox: {
-    width: 26, height: 26, borderRadius: 13,
+    width: 28, height: 28, borderRadius: 14,
     borderWidth: 2, borderColor: colors.border,
     justifyContent: 'center', alignItems: 'center',
-    marginRight: spacing.m, backgroundColor: 'rgba(255,255,255,0.5)',
+    marginRight: spacing.m, backgroundColor: colors.surfaceSolid,
   },
   checkboxCompleted: { backgroundColor: colors.primary, borderColor: colors.primary },
   taskTextContainer: { justifyContent: 'center' },
   taskTitle: { ...typography.bodyBold, color: colors.text, marginBottom: 4 },
   taskTitleCompleted: { textDecorationLine: 'line-through', color: colors.textSecondary, fontWeight: '400' },
   categoryBadge: { flexDirection: 'row', alignItems: 'center' },
-  categoryText: { fontSize: 12, fontWeight: '600' },
+  categoryText: { fontSize: 13, fontWeight: '600' },
   emptyContainer: { alignItems: 'center', justifyContent: 'center', marginTop: spacing.xxl * 2 },
   emptyText: { ...typography.body, color: colors.textSecondary, marginTop: spacing.m },
   fab: {
     position: 'absolute', bottom: spacing.xl, right: spacing.xl,
-    borderRadius: 28, overflow: 'hidden', ...shadows.card,
+    borderRadius: 30, overflow: 'hidden', ...shadows.button,
   },
-  fabBlur: { width: 56, height: 56, justifyContent: 'center', alignItems: 'center' },
-  modalContainer: { flex: 1, justifyContent: 'flex-end' },
+  fabBlur: { width: 60, height: 60, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(88, 86, 214, 0.9)' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end' },
+  modalContainer: { width: '100%' },
   modalContent: {
     backgroundColor: colors.surfaceSolid,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,
-    padding: spacing.xl, paddingBottom: 40,
+    padding: spacing.xl, paddingBottom: 50,
+    ...shadows.card,
   },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.l },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xl },
   modalTitle: { ...typography.h3 },
   input: {
     backgroundColor: colors.background, borderRadius: borderRadius.m,
-    padding: spacing.m, fontSize: 17, marginBottom: spacing.l,
+    padding: spacing.l, fontSize: 19, marginBottom: spacing.xl,
+    color: colors.text, fontWeight: '500',
   },
-  categoryLabel: { ...typography.bodyBold, marginBottom: spacing.s },
+  categoryLabel: { ...typography.bodyBold, marginBottom: spacing.m },
   categorySelector: { flexDirection: 'row', marginBottom: spacing.xl, gap: spacing.s },
   categoryOption: {
     flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: spacing.m, paddingVertical: spacing.s,
+    paddingHorizontal: spacing.m, paddingVertical: 10,
     borderRadius: borderRadius.full, borderWidth: 1, borderColor: colors.border,
   },
-  categoryOptionText: { fontSize: 14, fontWeight: '600', marginLeft: 4 },
+  categoryOptionText: { fontSize: 15, fontWeight: '600', marginLeft: 6 },
   saveButton: {
     backgroundColor: colors.primary, borderRadius: borderRadius.l,
-    padding: spacing.m, alignItems: 'center',
+    padding: spacing.m, alignItems: 'center', ...shadows.button,
   },
-  saveButtonText: { color: colors.surfaceSolid, fontSize: 17, fontWeight: '600' },
+  saveButtonText: { color: colors.surfaceSolid, fontSize: 19, fontWeight: '700' },
 });
