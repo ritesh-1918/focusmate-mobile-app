@@ -1,201 +1,137 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, shadows, borderRadius } from '../styles/theme';
+import { colors, typography, spacing, borderRadius, shadows } from '../styles/theme';
 
 export default function ProfileScreen({ navigation }) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const [stats, setStats] = useState({ completed: 0, total: 0 });
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 6,
-        tension: 40,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadStats();
+    });
+    loadStats();
+    return unsubscribe;
+  }, [navigation]);
+
+  const loadStats = async () => {
+    try {
+      const storedTasks = await AsyncStorage.getItem('@tasks');
+      if (storedTasks) {
+        const tasks = JSON.parse(storedTasks);
+        const completed = tasks.filter(t => t.completed).length;
+        setStats({ completed, total: tasks.length });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleReset = () => {
+    Alert.alert("Reset App", "This will delete all tasks and show onboarding again. Are you sure?", [
+      { text: "Cancel", style: "cancel" },
+      { 
+        text: "Reset", 
+        style: "destructive",
+        onPress: async () => {
+          await AsyncStorage.clear();
+          navigation.replace('Onboarding');
+        }
+      }
+    ]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+      <Image source={require('../../assets/icon.png')} style={styles.bgImage} blurRadius={50} />
+      <View style={styles.overlay} />
+
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={28} color={colors.primary} />
+          <Text style={styles.backText}>Home</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.content}>
         
-        {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>R</Text>
-            </View>
-            <View style={styles.badge}>
-              <Ionicons name="star" size={14} color={colors.surface} />
-            </View>
+        <BlurView intensity={80} tint="light" style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Ionicons name="person" size={50} color={colors.surfaceSolid} />
           </View>
           <Text style={styles.name}>Ritesh</Text>
-          <Text style={styles.course}>Electronics & Communication</Text>
-          
-          <View style={styles.goalContainer}>
-            <Ionicons name="rocket" size={18} color={colors.primary} />
-            <Text style={styles.goalText}>Goal: Become a Mobile App Developer</Text>
-          </View>
-        </View>
+          <Text style={styles.course}>Student</Text>
+        </BlurView>
 
-        {/* Stats Grid */}
+        <Text style={styles.sectionTitle}>Your Stats</Text>
         <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <View style={[styles.iconContainer, { backgroundColor: colors.gradientStart }]}>
-              <Ionicons name="checkmark-done" size={24} color={colors.primary} />
+          <BlurView intensity={80} tint="light" style={styles.statCard}>
+            <View style={[styles.iconContainer, { backgroundColor: 'rgba(0,122,255,0.1)' }]}>
+              <Ionicons name="checkmark-done" size={28} color={colors.primary} />
             </View>
-            <Text style={styles.statValue}>12</Text>
-            <Text style={styles.statLabel}>Tasks Completed</Text>
-          </View>
+            <Text style={styles.statValue}>{stats.completed}</Text>
+            <Text style={styles.statLabel}>Tasks Done</Text>
+          </BlurView>
           
-          <View style={styles.statCard}>
-            <View style={[styles.iconContainer, { backgroundColor: '#FEF3C7' }]}>
-              <Ionicons name="flame" size={24} color="#D97706" />
+          <BlurView intensity={80} tint="light" style={styles.statCard}>
+            <View style={[styles.iconContainer, { backgroundColor: 'rgba(52,199,89,0.1)' }]}>
+              <Ionicons name="list" size={28} color={colors.secondary} />
             </View>
-            <Text style={styles.statValue}>5 Days</Text>
-            <Text style={styles.statLabel}>Current Streak</Text>
-          </View>
+            <Text style={styles.statValue}>{stats.total}</Text>
+            <Text style={styles.statLabel}>Total Tasks</Text>
+          </BlurView>
         </View>
 
-      </Animated.View>
-
-      <Animated.View style={[styles.footer, { opacity: fadeAnim }]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          activeOpacity={0.8}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={20} color={colors.surface} style={{ marginRight: spacing.s }} />
-          <Text style={styles.backButtonText}>Back to Home</Text>
+        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+          <Ionicons name="refresh" size={20} color={colors.error} style={{ marginRight: 8 }} />
+          <Text style={styles.resetText}>Reset App Data</Text>
         </TouchableOpacity>
-      </Animated.View>
+
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: spacing.l,
-    justifyContent: 'center',
-  },
+  container: { flex: 1, backgroundColor: colors.background },
+  bgImage: { position: 'absolute', width: '100%', height: '100%', opacity: 0.3 },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(242, 242, 247, 0.7)' },
+  header: { flexDirection: 'row', alignItems: 'center', padding: spacing.m },
+  backButton: { flexDirection: 'row', alignItems: 'center' },
+  backText: { ...typography.body, color: colors.primary, marginLeft: 4 },
+  content: { flex: 1, padding: spacing.l },
   profileCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    alignItems: 'center',
-    marginBottom: spacing.l,
-    ...shadows.card,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: spacing.m,
+    borderRadius: borderRadius.xl, padding: spacing.xl,
+    alignItems: 'center', marginBottom: spacing.xl,
+    overflow: 'hidden', borderWidth: 1, borderColor: colors.border,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 100, height: 100, borderRadius: 50,
     backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...shadows.button,
+    justifyContent: 'center', alignItems: 'center',
+    marginBottom: spacing.m, ...shadows.card,
   },
-  avatarText: {
-    color: colors.surface,
-    fontSize: 40,
-    fontWeight: 'bold',
-  },
-  badge: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: colors.secondary,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: colors.surface,
-  },
-  name: {
-    ...typography.h1,
-    marginBottom: spacing.xs,
-  },
-  course: {
-    ...typography.body,
-    marginBottom: spacing.l,
-  },
-  goalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.gradientStart,
-    paddingHorizontal: spacing.m,
-    paddingVertical: spacing.s,
-    borderRadius: borderRadius.full,
-  },
-  goalText: {
-    ...typography.caption,
-    color: colors.primary,
-    fontWeight: '600',
-    marginLeft: spacing.s,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  name: { ...typography.h2, marginBottom: 4 },
+  course: { ...typography.body, color: colors.textSecondary },
+  sectionTitle: { ...typography.h3, marginBottom: spacing.m },
+  statsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xxl },
   statCard: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.l,
-    padding: spacing.l,
-    alignItems: 'center',
-    marginHorizontal: spacing.xs,
-    ...shadows.card,
+    flex: 1, borderRadius: borderRadius.l, padding: spacing.m,
+    alignItems: 'center', marginHorizontal: spacing.xs,
+    overflow: 'hidden', borderWidth: 1, borderColor: colors.border,
   },
   iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.s,
+    width: 56, height: 56, borderRadius: 28,
+    justifyContent: 'center', alignItems: 'center', marginBottom: spacing.s,
   },
-  statValue: {
-    ...typography.h2,
-    marginBottom: 2,
+  statValue: { ...typography.h2, marginBottom: 2 },
+  statLabel: { ...typography.caption },
+  resetButton: {
+    flexDirection: 'row', backgroundColor: 'rgba(255, 59, 48, 0.1)',
+    paddingVertical: spacing.m, borderRadius: borderRadius.full,
+    justifyContent: 'center', alignItems: 'center', marginTop: 'auto',
   },
-  statLabel: {
-    ...typography.caption,
-  },
-  footer: {
-    padding: spacing.l,
-    paddingBottom: spacing.xl,
-  },
-  backButton: {
-    flexDirection: 'row',
-    backgroundColor: colors.text,
-    paddingVertical: spacing.m,
-    borderRadius: borderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...shadows.button,
-  },
-  backButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  resetText: { color: colors.error, fontSize: 17, fontWeight: '600' },
 });

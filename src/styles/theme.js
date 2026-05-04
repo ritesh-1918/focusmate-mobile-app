@@ -1,12 +1,14 @@
 export const colors = {
-  primary: '#4F46E5', // Indigo
-  secondary: '#10B981', // Emerald
-  background: '#F9FAFB', // Light gray
-  surface: '#FFFFFF',
-  text: '#111827',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  error: '#EF4444',
+  // Apple-like neutral palette
+  primary: '#007AFF', // iOS Blue
+  secondary: '#34C759', // iOS Green
+  background: '#F2F2F7', // iOS Light Gray Background
+  surface: 'rgba(255, 255, 255, 0.7)', // Translucent surface for BlurView
+  surfaceSolid: '#FFFFFF',
+  text: '#000000',
+  textSecondary: '#8E8E93',
+  border: 'rgba(0,0,0,0.1)',
+  error: '#FF3B30', // iOS Red
   gradientStart: '#E0E7FF',
   gradientEnd: '#F3E8FF',
 };
@@ -22,51 +24,64 @@ export const spacing = {
 
 export const typography = {
   h1: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 34,
+    fontWeight: '700',
     color: colors.text,
+    letterSpacing: 0.4,
   },
   h2: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.text,
+    letterSpacing: 0.35,
   },
   h3: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '600',
     color: colors.text,
+    letterSpacing: 0.35,
   },
   body: {
-    fontSize: 16,
-    color: colors.textSecondary,
+    fontSize: 17,
+    fontWeight: '400',
+    color: colors.text,
+    letterSpacing: -0.41,
+  },
+  bodyBold: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.text,
+    letterSpacing: -0.41,
   },
   caption: {
-    fontSize: 14,
-    color: '#9CA3AF',
+    fontSize: 13,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    letterSpacing: -0.08,
   },
 };
 
 export const shadows = {
   card: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
   button: {
-    shadowColor: '#4F46E5',
+    shadowColor: '#007AFF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowRadius: 10,
     elevation: 5,
   }
 };
 
 export const borderRadius = {
   s: 8,
-  m: 12,
-  l: 16,
-  xl: 24,
+  m: 14, // Standard iOS corner radius for smaller elements
+  l: 20, // Standard iOS corner radius for cards
+  xl: 32,
   full: 9999,
 };
