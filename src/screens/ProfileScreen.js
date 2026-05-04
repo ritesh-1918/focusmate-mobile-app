@@ -69,7 +69,7 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.sectionTitle}>Your Stats</Text>
         <View style={styles.statsContainer}>
           <BlurView intensity={90} tint="light" style={styles.statCard}>
-            <View style={[styles.iconContainer, { backgroundColor: 'rgba(88, 86, 214, 0.1)' }]}>
+            <View style={[styles.iconContainer, { backgroundColor: 'rgba(0,0,0,0.05)' }]}>
               <Ionicons name="checkmark-done" size={28} color={colors.primary} />
             </View>
             <Text style={styles.statValue}>{stats.completed}</Text>
@@ -77,8 +77,8 @@ export default function ProfileScreen({ navigation }) {
           </BlurView>
           
           <BlurView intensity={90} tint="light" style={styles.statCard}>
-            <View style={[styles.iconContainer, { backgroundColor: 'rgba(52,199,89,0.1)' }]}>
-              <Ionicons name="list" size={28} color={colors.secondary} />
+            <View style={[styles.iconContainer, { backgroundColor: 'rgba(230, 57, 70, 0.1)' }]}>
+              <Ionicons name="list" size={28} color={colors.error} />
             </View>
             <Text style={styles.statValue}>{stats.total}</Text>
             <Text style={styles.statLabel}>Total Tasks</Text>

@@ -15,9 +15,9 @@ export default function HomeScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const categories = [
-    { name: 'Study', icon: 'book', color: '#5856D6' }, // Indigo
-    { name: 'Assignment', icon: 'document-text', color: '#FF9500' }, // Orange
-    { name: 'Personal', icon: 'person', color: '#34C759' } // Green
+    { name: 'Study', icon: 'book', color: '#111111' }, // Stark Black
+    { name: 'Assignment', icon: 'document-text', color: '#E63946' }, // Carmine Red
+    { name: 'Personal', icon: 'person', color: '#808080' } // Neutral Gray
   ];
 
   useEffect(() => {
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     position: 'absolute', bottom: spacing.xl, right: spacing.xl,
     borderRadius: 30, overflow: 'hidden', ...shadows.button,
   },
-  fabBlur: { width: 60, height: 60, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(88, 86, 214, 0.9)' },
+  fabBlur: { width: 60, height: 60, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary },
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalContainer: { width: '100%' },
   modalContent: {

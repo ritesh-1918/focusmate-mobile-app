@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginBottom: spacing.l,
     padding: spacing.l,
-    backgroundColor: 'rgba(88, 86, 214, 0.1)', // Translucent Indigo
+    backgroundColor: 'rgba(0,0,0,0.05)', // Subtle gray
     borderRadius: borderRadius.full,
   },
   title: {

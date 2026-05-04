@@ -1,16 +1,16 @@
 export const colors = {
-  // Pure Apple-like palette
-  primary: '#5856D6', // iOS Indigo
-  secondary: '#34C759', // iOS Green
-  background: '#F2F2F7', // iOS Standard Light Gray Background
-  surface: 'rgba(255, 255, 255, 0.75)', // Slightly more opaque glass
+  // The "Notion" Aesthetic - Minimalist, bespoke, professional
+  primary: '#111111', // Almost black
+  secondary: '#E63946', // Stark Carmine Red accent
+  background: '#F9F9F9', // Very soft off-white
+  surface: 'rgba(255, 255, 255, 0.9)', // High opacity white for minimal glass
   surfaceSolid: '#FFFFFF', // Pure White for cards
-  text: '#000000',
-  textSecondary: '#8E8E93',
-  border: 'rgba(60, 60, 67, 0.1)', // iOS separator color
-  error: '#FF3B30', // iOS Red
-  gradientStart: '#E0E7FF',
-  gradientEnd: '#F3E8FF',
+  text: '#1A1A1A', // Deep charcoal, softer than pure black
+  textSecondary: '#808080', // Neutral gray
+  border: '#EAEAEA', // Very soft border
+  error: '#E63946', // Carmine Red
+  gradientStart: '#FFFFFF',
+  gradientEnd: '#F9F9F9',
 };
 
 export const spacing = {
@@ -24,64 +24,64 @@ export const spacing = {
 
 export const typography = {
   h1: {
-    fontSize: 34,
-    fontWeight: '800', // Heavier weight for Apple feel
+    fontSize: 32,
+    fontWeight: '800', 
     color: colors.text,
-    letterSpacing: 0.38,
+    letterSpacing: -0.5,
   },
   h2: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
     color: colors.text,
-    letterSpacing: 0.36,
+    letterSpacing: -0.3,
   },
   h3: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '600',
     color: colors.text,
-    letterSpacing: -0.26,
+    letterSpacing: -0.2,
   },
   body: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '400',
     color: colors.text,
-    letterSpacing: -0.41,
+    letterSpacing: -0.1,
   },
   bodyBold: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    letterSpacing: -0.41,
+    letterSpacing: -0.1,
   },
   caption: {
     fontSize: 13,
-    fontWeight: '400',
+    fontWeight: '500',
     color: colors.textSecondary,
-    letterSpacing: -0.08,
+    letterSpacing: 0,
   },
 };
 
 export const shadows = {
   card: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.05,
-    shadowRadius: 16,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   button: {
-    shadowColor: '#5856D6', // Indigo shadow
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   }
 };
 
 export const borderRadius = {
-  s: 10,
-  m: 16, // Smoother squircle for small elements
-  l: 24, // Smoother squircle for cards
-  xl: 36,
+  s: 6,
+  m: 12,
+  l: 16, // Sharper, more web-like radius
+  xl: 24,
   full: 9999,
 };
