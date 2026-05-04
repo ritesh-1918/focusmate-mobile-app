@@ -180,66 +180,69 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
 
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.modalOverlay}>
-            <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
-            <KeyboardAvoidingView 
-              behavior={Platform.OS === "ios" ? "padding" : "height"} 
-              style={styles.modalContainer}
-            >
-              <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>New Task</Text>
-                  <TouchableOpacity onPress={() => setModalVisible(false)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-                    <Ionicons name="close-circle" size={30} color={colors.textSecondary} />
-                  </TouchableOpacity>
-                </View>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === "ios" ? "padding" : "height"} 
+          style={{ flex: 1, justifyContent: 'flex-end' }}
+        >
+          <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFillObject} />
+          
+          <TouchableOpacity 
+            style={{ flex: 1 }} 
+            activeOpacity={1} 
+            onPress={Keyboard.dismiss} 
+          />
 
-                <TextInput
-                  style={styles.input}
-                  placeholder="What do you need to do?"
-                  placeholderTextColor={colors.textSecondary}
-                  value={newTaskTitle}
-                  onChangeText={setNewTaskTitle}
-                  autoFocus={true}
-                  enablesReturnKeyAutomatically
-                  returnKeyType="done"
-                  onSubmitEditing={addTask}
-                />
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>New Task</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                <Ionicons name="close-circle" size={30} color={colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
 
-                <Text style={styles.categoryLabel}>Category</Text>
-                <View style={styles.categorySelector}>
-                  {categories.map((cat) => (
-                    <TouchableOpacity
-                      key={cat.name}
-                      style={[
-                        styles.categoryOption,
-                        selectedCategory === cat.name && { backgroundColor: cat.color, borderColor: cat.color }
-                      ]}
-                      onPress={() => setSelectedCategory(cat.name)}
-                    >
-                      <Ionicons 
-                        name={cat.icon} 
-                        size={16} 
-                        color={selectedCategory === cat.name ? colors.surfaceSolid : cat.color} 
-                      />
-                      <Text style={[
-                        styles.categoryOptionText,
-                        selectedCategory === cat.name ? { color: colors.surfaceSolid } : { color: cat.color }
-                      ]}>
-                        {cat.name}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+            <TextInput
+              style={styles.input}
+              placeholder="What do you need to do?"
+              placeholderTextColor={colors.textSecondary}
+              value={newTaskTitle}
+              onChangeText={setNewTaskTitle}
+              autoFocus={true}
+              enablesReturnKeyAutomatically
+              returnKeyType="done"
+              onSubmitEditing={addTask}
+            />
 
-                <TouchableOpacity style={styles.saveButton} onPress={addTask}>
-                  <Text style={styles.saveButtonText}>Save Task</Text>
+            <Text style={styles.categoryLabel}>Category</Text>
+            <View style={styles.categorySelector}>
+              {categories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.name}
+                  style={[
+                    styles.categoryOption,
+                    selectedCategory === cat.name && { backgroundColor: cat.color, borderColor: cat.color }
+                  ]}
+                  onPress={() => setSelectedCategory(cat.name)}
+                >
+                  <Ionicons 
+                    name={cat.icon} 
+                    size={16} 
+                    color={selectedCategory === cat.name ? colors.surfaceSolid : cat.color} 
+                  />
+                  <Text style={[
+                    styles.categoryOptionText,
+                    selectedCategory === cat.name ? { color: colors.surfaceSolid } : { color: cat.color }
+                  ]}>
+                    {cat.name}
+                  </Text>
                 </TouchableOpacity>
-              </View>
-            </KeyboardAvoidingView>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.saveButton} onPress={addTask}>
+              <Text style={styles.saveButtonText}>Save Task</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </Modal>
 
     </SafeAreaView>
